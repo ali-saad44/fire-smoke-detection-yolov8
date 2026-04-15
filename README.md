@@ -2,24 +2,7 @@
 
 AI-powered real-time fire and smoke detection system using **YOLOv8** trained on 22,000+ aerial images. Upload drone footage and get instant detection with bounding boxes and confidence scores.
 
----
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Datasets](#datasets)
-- [Data Preparation](#data-preparation)
-- [Model Training (Kaggle)](#model-training-kaggle)
-- [Training Results](#training-results)
-- [Installation](#installation)
-- [Running the Web App](#running-the-web-app)
-- [Configuration](#configuration)
-- [Tech Stack](#tech-stack)
-- [Author](#author)
-
----
 
 ## Overview
 
