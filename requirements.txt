@@ -1,0 +1,15 @@
+ultralytics==8.2.0
+deep-sort-realtime
+opencv-python==4.9.0.80
+Pillow
+numpy
+pandas
+matplotlib
+seaborn
+albumentations
+wandb
+pyproj
+geopy
+folium
+flask
+pyyaml

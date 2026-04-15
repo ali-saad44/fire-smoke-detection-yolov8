@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blast Detection AI — Real-Time Fire & Smoke Detection</title>
+    <meta name="description" content="AI-powered blast detection system using YOLOv8 for real-time fireball and smoke detection from drone footage.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bg-particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 4C14 4 10 10 10 16C10 22 14 28 20 36C26 28 30 22 30 16C30 10 26 4 20 4Z" fill="url(#flame-grad)"/>
+                        <path d="M20 12C17 12 15 15 15 18C15 21 17 24 20 28C23 24 25 21 25 18C25 15 23 12 20 12Z" fill="url(#flame-inner)"/>
+                        <defs>
+                            <linearGradient id="flame-grad" x1="20" y1="4" x2="20" y2="36">
+                                <stop stop-color="#FF6B35"/>
+                                <stop offset="1" stop-color="#F7C948"/>
+                            </linearGradient>
+                            <linearGradient id="flame-inner" x1="20" y1="12" x2="20" y2="28">
+                                <stop stop-color="#FFE066"/>
+                                <stop offset="1" stop-color="#FF9F1C"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Blast Detection</h1>
+                    <span class="logo-badge">AI Powered</span>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#upload-section" class="nav-link">Detect</a>
+                <a href="#model-section" class="nav-link">Model Info</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                YOLOv8 • 78.4% mAP • Real-Time
+            </div>
+            <h2 class="hero-title">
+                Detect <span class="gradient-text">Blasts & Smoke</span><br>
+                From Drone Footage
+            </h2>
+            <p class="hero-subtitle">
+                Upload drone video or images and our AI will detect fireballs and smoke plumes
+                in real-time using a fine-tuned YOLOv8 model trained on 22,000+ images.
+            </p>
+            <a href="#upload-section" class="hero-cta">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Start Detection
+            </a>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload-section">
+        <div class="container">
+            <h2 class="section-title">Upload & Detect</h2>
+            <p class="section-desc">Drop your drone footage below — supports images (JPG, PNG) and videos (MP4, AVI, MOV)</p>
+
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.bmp,.webp,.mp4,.avi,.mov,.mkv,.wmv" hidden>
+                <div class="upload-content" id="upload-content">
+                    <div class="upload-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3>Drag & drop your file here</h3>
+                    <p>or <span class="browse-link">browse files</span></p>
+                    <div class="upload-formats">
+                        <span class="format-tag">JPG</span>
+                        <span class="format-tag">PNG</span>
+                        <span class="format-tag">MP4</span>
+                        <span class="format-tag">AVI</span>
+                        <span class="format-tag">MOV</span>
+                    </div>
+                    <p class="upload-limit">Maximum file size: 200 MB</p>
+                </div>
+
+                <!-- Preview -->
+                <div class="preview-area" id="preview-area" style="display:none;">
+                    <img id="preview-image" style="display:none;" alt="Preview">
+                    <video id="preview-video" controls style="display:none;"></video>
+                    <div class="preview-info">
+                        <span id="preview-name"></span>
+                        <span id="preview-size"></span>
+                    </div>
+                    <button class="btn-remove" id="btn-remove" title="Remove file">✕</button>
+                </div>
+            </div>
+
+            <button class="detect-btn" id="detect-btn" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                Run Detection
+            </button>
+
+            <!-- Processing Indicator -->
+            <div class="processing" id="processing" style="display:none;">
+                <div class="processing-spinner"></div>
+                <h3>Analyzing your file...</h3>
+                <p id="processing-status">Running YOLOv8 inference</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results-section" style="display:none;">
+        <div class="container">
+            <h2 class="section-title">Detection Results</h2>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="stats-grid"></div>
+
+            <!-- Result Display -->
+            <div class="result-display-container">
+                <div class="result-display" id="result-display"></div>
+                <div id="download-container" style="display:none; text-align:center; margin-top:16px;">
+                    <a id="download-link" href="#" download class="btn-download">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Processed Video
+                    </a>
+                </div>
+            </div>
+
+            <!-- Detections Table (for images) -->
+            <div class="detections-table-wrap" id="detections-table-wrap" style="display:none;">
+                <h3>Detected Objects</h3>
+                <table class="detections-table" id="detections-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Class</th>
+                            <th>Confidence</th>
+                            <th>Bounding Box</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detections-tbody"></tbody>
+                </table>
+            </div>
+
+            <button class="btn-new" id="btn-new">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Analyze Another File
+            </button>
+        </div>
+    </section>
+
+    <!-- Model Info Section -->
+    <section class="model-section" id="model-section">
+        <div class="container">
+            <h2 class="section-title">Model Performance</h2>
+            <p class="section-desc">Fine-tuned YOLOv8s on 22,782 annotated images</p>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" data-value="78.4">0</div>
+                    <div class="metric-label">mAP@50</div>
+                    <div class="metric-bar"><div class="metric-fill" style="width: 78.4%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" data-value="79.7">0</div>
+                    <div class="metric-label">Precision</div>
+                    <div class="metric-bar"><div class="metric-fill" style="width: 79.7%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" data-value="71.6">0</div>
+                    <div class="metric-label">Recall</div>
+                    <div class="metric-bar"><div class="metric-fill" style="width: 71.6%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" data-value="98">0</div>
+                    <div class="metric-label">FPS (T4 GPU)</div>
+                    <div class="metric-bar"><div class="metric-fill" style="width: 98%"></div></div>
+                </div>
+            </div>
+
+            <div class="class-cards">
+                <div class="class-card fireball-card">
+                    <div class="class-icon">🔥</div>
+                    <h3>Fireball</h3>
+                    <div class="class-stat">83.3% mAP</div>
+                    <p>Detects fireballs, explosions, and intense flames from aerial perspectives</p>
+                </div>
+                <div class="class-card smoke-card">
+                    <div class="class-icon">💨</div>
+                    <h3>Smoke Plume</h3>
+                    <div class="class-stat">73.5% mAP</div>
+                    <p>Identifies rising smoke columns, haze patterns, and smoke plumes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-num">1</div>
+                    <div class="step-icon">📤</div>
+                    <h3>Upload</h3>
+                    <p>Upload drone video or image</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-num">2</div>
+                    <div class="step-icon">🔍</div>
+                    <h3>Detect</h3>
+                    <p>YOLOv8 scans each frame</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-num">3</div>
+                    <div class="step-icon">📊</div>
+                    <h3>Analyze</h3>
+                    <p>Bounding boxes & confidence</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-num">4</div>
+                    <div class="step-icon">🎯</div>
+                    <h3>Results</h3>
+                    <p>Annotated output + stats</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built by <strong>Saad Ali</strong> — Blast Detection AI System &copy; 2026</p>
+            <p class="footer-tech">YOLOv8 • PyTorch • Flask • OpenCV</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

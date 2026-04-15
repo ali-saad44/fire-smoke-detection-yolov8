@@ -1,0 +1,42 @@
+# ============================================================
+# BLAST DETECTION — PIPELINE CONFIGURATION
+# ============================================================
+# Settings for the full detection + tracking + GPS pipeline
+
+# --- Model ---
+model:
+  weights: "models/yolov8_blast/best.pt"     # Path to trained model
+  img_size: 640
+  conf_threshold: 0.55
+  iou_threshold: 0.45
+
+# --- Consecutive Frame Filter ---
+frame_filter:
+  min_consecutive: 3       # Detections must appear in 3+ consecutive frames
+  iou_match_threshold: 0.3 # IoU threshold to consider detection as "same"
+
+# --- DeepSORT Tracker ---
+tracker:
+  max_age: 30              # Max frames to keep a track without detections
+  n_init: 3                # Min detections before track is confirmed
+  max_iou_distance: 0.7
+  max_cosine_distance: 0.3
+
+# --- GPS ---
+gps:
+  enabled: false           # Set to true when GPS metadata is available
+  camera_fov: 82.6         # Drone camera field of view (degrees)
+  default_altitude: 100    # Default altitude in meters
+
+# --- Logging ---
+logging:
+  events_dir: "logs/events"
+  save_clips: true
+  clip_duration: 10        # Seconds of video to save around detection
+  clips_dir: "clips"
+
+# --- Web Demo ---
+web:
+  upload_dir: "web/uploads"
+  max_file_size_mb: 500
+  allowed_extensions: ["mp4", "avi", "mov", "mkv"]

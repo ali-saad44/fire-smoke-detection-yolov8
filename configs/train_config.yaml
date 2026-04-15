@@ -1,0 +1,51 @@
+# ============================================================
+# BLAST DETECTION — TRAINING CONFIGURATION
+# ============================================================
+# Edit these values before training
+
+# --- Paths ---
+data_yaml: "data/yolo_dataset/data.yaml"
+base_model: "models/pretrained_weights/yolov8s.pt"
+project: "runs"
+
+# --- Hardware ---
+device: 0          # GPU index (0, 1, ...) or 'cpu'
+batch_size: 16     # Use 8 if GPU has < 10GB VRAM
+
+# --- Image ---
+img_size: 640
+
+# --- Phase A: Frozen backbone ---
+phase_a:
+  epochs: 50
+  freeze: 10       # Freeze first 10 layers
+  lr0: 0.001
+  lrf: 0.01
+  patience: 20
+  name: "phase_a_frozen"
+
+# --- Phase B: Full fine-tune ---
+phase_b:
+  epochs: 100
+  freeze: 0        # All layers trainable
+  lr0: 0.0003
+  lrf: 0.01
+  patience: 20
+  name: "phase_b_full"
+
+# --- Augmentation ---
+augmentation:
+  mosaic: 1.0
+  mixup: 0.1
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  flipud: 0.1
+  fliplr: 0.5
+  scale: 0.5
+
+# --- Detection ---
+detection:
+  conf_threshold: 0.55   # Minimum confidence to accept detection
+  iou_threshold: 0.3     # IoU threshold for consecutive frame matching
+  consecutive_frames: 3  # Must detect in N consecutive frames
