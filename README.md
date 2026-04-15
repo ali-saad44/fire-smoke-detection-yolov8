@@ -98,13 +98,12 @@ projrct/
 
 ## Datasets
 
-Three public datasets were merged to create the training data:
+Two public datasets were merged to create the training data:
 
 | # | Dataset | Source | Content | Size |
 |---|---------|--------|---------|------|
-| 1 | **WA-YOLO** | [OSF.io](https://osf.io/H34Q6) | Explosion/blast aerial images with YOLO annotations | ~500 MB |
-| 2 | **FLAME 1** | [IEEE Dataport](https://ieee-dataport.org/open-access/flame-dataset-aerial-imagery-pile-burn-detection-using-drones) | Aerial fire images (classification → auto-annotated to YOLO) | ~2 GB |
-| 3 | **DFire** | [GitHub](https://github.com/gaiasd/DFireDataset) | Fire & smoke images with YOLO annotations | ~3 GB |
+| 1 | **FLAME 3** | [IEEE Dataport](https://ieee-dataport.org/open-access/flame-dataset-aerial-imagery-pile-burn-detection-using-drones) | Aerial fire images (classification → auto-annotated to YOLO) | ~2 GB |
+| 2 | **DFire** | [GitHub](https://github.com/gaiasd/DFireDataset) | Fire & smoke images with YOLO annotations | ~3 GB |
 
 Additionally, **~9,900 hard negative images** (dust clouds, sun glare, campfires, clouds) were added as background images to reduce false alarms.
 
@@ -235,27 +234,12 @@ Training was performed on **Kaggle** using a **Tesla T4 GPU** with the following
 | Fireball | 0.827 | 0.779 | 0.833 |
 | Smoke Plume | 0.767 | 0.653 | 0.735 |
 
-### Inference Speed
 
-- **10.2ms per image** on Tesla T4 GPU (~98 FPS)
-- **0.2ms** preprocessing, **0.8ms** postprocessing
 
----
-
-## Installation
-
-### Prerequisites
-
-- Python 3.10+
-- pip
-- (Optional) NVIDIA GPU with CUDA for faster inference
 
 ### Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/fire-smoke-detection.git
-cd fire-smoke-detection
 
 # Install dependencies
 pip install -r requirements.txt
@@ -273,22 +257,6 @@ models/yolov8_blast/best.pt
 
 ---
 
-## Running the Web App
-
-```bash
-# Start the Flask server
-python web/app.py
-```
-
-Then open your browser and go to: **http://localhost:5000**
-
-### Usage
-
-1. Click **"Start Detection"** or scroll to the upload area
-2. Drag and drop a video (MP4, AVI, MOV) or image (JPG, PNG)
-3. Click **"Run Detection"**
-4. View annotated results with bounding boxes and statistics
-5. Download the processed video using the **"Download Processed Video"** button
 
 ### Optional: Install FFmpeg
 
@@ -296,48 +264,6 @@ For in-browser video playback, install [FFmpeg](https://ffmpeg.org/download.html
 
 ---
 
-## Configuration
 
-### Pipeline Config (`configs/pipeline_config.yaml`)
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `conf_threshold` | 0.55 | Minimum confidence for detections |
-| `iou_threshold` | 0.45 | NMS IoU threshold |
-| `min_consecutive` | 3 | Frames before confirming a detection |
-| `max_file_size_mb` | 500 | Maximum upload file size |
 
-### Web App Config (`web/app.py`)
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `CONFIDENCE_THRESHOLD` | 0.45 | Minimum confidence shown in web results |
-| `MAX_CONTENT_LENGTH` | 200 MB | Maximum upload size |
-| `PORT` | 5000 | Flask server port |
-
----
-
-## Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| **Detection Model** | YOLOv8s (Ultralytics) |
-| **Framework** | PyTorch 2.x |
-| **Web Server** | Flask |
-| **Computer Vision** | OpenCV |
-| **Frontend** | Vanilla HTML/CSS/JS |
-| **Training Platform** | Kaggle (Tesla T4 GPU) |
-
----
-
-## Author
-
-**Saad Ali** — AI & Computer Vision Developer
-
-Built as part of a blast detection research project using deep learning for aerial surveillance applications.
-
----
-
-## License
-
-This project is for educational and research purposes.
